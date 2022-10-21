@@ -20,6 +20,7 @@ struct CategoryListView: View {
                     Text("Categories")
                         .font(.system(size: 26))
                         .bold()
+                        .foregroundColor(.black)
                     Spacer()
                     Button {
                         // TODO: Open cart
@@ -72,7 +73,12 @@ struct CategoryListView: View {
                         ScrollView {
                             LazyVStack(spacing: 0) {
                                 ForEach(viewModel.categoryList, id: \.self) { category in
-                                    CategoryCellView(categoryName: category, viewModel: viewModel)
+                                    NavigationLink {
+                                        ProductListView(viewModel: ProductListViewModel(category: category))
+                                            .environmentObject(cart)
+                                    } label: {
+                                        CategoryCellView(categoryName: category, viewModel: viewModel)
+                                    }
                                 }
                             }
                             .padding(.horizontal)
@@ -85,6 +91,10 @@ struct CategoryListView: View {
         }
         .onAppear {
             viewModel.categoryListOnAppear()
+        }
+        .background {
+            Color.white
+                .ignoresSafeArea()
         }
         .ignoresSafeArea(.all, edges: .bottom)
     }
@@ -106,7 +116,9 @@ struct CategoryCellView: View {
         VStack(spacing: 0) {
             Text(categoryName.categoryFormatted)
                 .font(.system(size: 32))
+                .foregroundColor(.black)
                 .padding()
+            
             SeparatorView()
         }
     }

@@ -14,8 +14,18 @@ class ProductListViewModel: ObservableObject {
     
     @Published var isLoading = false
     
+    private let category: String
+    
+    init(category: String = "") {
+        self.category = category
+    }
+    
     
     // MARK: View lifecycle
+    
+    func viewTitle() -> String {
+        return category.isEmpty ? "Products" : category.categoryFormatted
+    }
     
     func productListOnAppear() {
         if productList.isEmpty {
@@ -28,15 +38,15 @@ class ProductListViewModel: ObservableObject {
     }
     
     
-    //MARK: Product management
+    // MARK: Data Loading
     
-    func addToCart(product: Product) {
+    /// Builds the string URL dependent on selected category
+    private var dataURL: String {
+        "https://dummyjson.com/products\(category.isEmpty ? "" : "/category/\(category)")"
     }
     
-    
-    // Data Loading
     private func loadProducts() {
-        guard let url = URL(string: "https://dummyjson.com/products") else { return }
+        guard let url = URL(string: dataURL) else { return }
         isLoading = true
         
         var request = URLRequest(url: url, timeoutInterval: 3.0)

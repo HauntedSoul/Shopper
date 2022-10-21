@@ -11,15 +11,16 @@ struct ProductListView: View {
     
     @EnvironmentObject var cart: Cart
     
-    @StateObject var viewModel = ProductListViewModel()
+    @StateObject var viewModel: ProductListViewModel
     
     var body: some View {
         ZStack {
             VStack {
                 HStack {
-                    Text("Products")
+                    Text(viewModel.viewTitle())
                         .font(.system(size: 26))
                         .bold()
+                        .foregroundColor(.black)
                     Spacer()
                     Button {
                         // TODO: Open cart
@@ -70,9 +71,9 @@ struct ProductListView: View {
                         }
                     } else {
                         ScrollView {
-                            LazyVStack(spacing: 0) {
+                            VStack(spacing: 0) {
                                 ForEach(viewModel.productList, id: \.self.id) { product in
-                                    ProductCellView(product: product, viewModel: viewModel)
+                                    ProductCellView(product: product)
                                 }
                             }
                             .padding(.horizontal)
@@ -86,20 +87,26 @@ struct ProductListView: View {
         .onAppear {
             viewModel.productListOnAppear()
         }
+        .background {
+            Color.white
+                .ignoresSafeArea()
+        }
         .ignoresSafeArea(.all, edges: .bottom)
     }
 }
 
 struct ProductListView_Previews: PreviewProvider {
     static var previews: some View {
-        ProductListView()
+        ProductListView(viewModel: ProductListViewModel(category: "smartphones"))
+            .environmentObject(Cart.testObject())
     }
 }
 
 struct ProductCellView: View {
     
+    @EnvironmentObject var cart: Cart
+    
     let product: Product
-    let viewModel: ProductListViewModel
     
     var body: some View {
         VStack(spacing: 0) {
@@ -113,15 +120,17 @@ struct ProductCellView: View {
                 
                 VStack(alignment: .leading) {
                     Text(product.title)
+                        .foregroundColor(.black)
                     Text("Stock: \(product.stock)")
+                        .foregroundColor(.black)
                 }
                 Spacer()
                 Image(systemName: "plus.circle")
                     .resizable()
-                    .tint(.blue)
+                    .foregroundColor(.blue)
                     .frame(width: 30, height: 30)
                     .onTapGesture {
-                        viewModel.addToCart(product: product)
+                        cart.addToCart(product: product)
                     }
             }
             .padding(.vertical)
