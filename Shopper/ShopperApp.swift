@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct ShopperApp: App {
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView {
+                CategoryListView()
+                    .environmentObject(Cart())
+            }
         }
     }
 }
