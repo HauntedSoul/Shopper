@@ -26,6 +26,11 @@ struct Product: Codable, Hashable {
     
     // MARK: API Calls
     
+    /// Fetches a list of products optionally filtered by a category.
+    /// An empty category returns all available products.
+    /// An inexisting category returns and empty array.
+    /// - Parameters:
+    ///     - category: Products category.
     static func loadProductList(category: String = "") -> Future<[Product], ProductAPIError> {
         return Future<[Product], ProductAPIError> { promise in
             let dataURL: String = "https://dummyjson.com/products\(category.isEmpty ? "" : "/category/\(category)")"
