@@ -11,8 +11,6 @@ class CategoryListViewModel: ObservableObject {
     
     @Published var categoryList: [String] = []
     
-//    @Published var cart: Cart = Cart()
-    
     @Published var isLoading = false
     
     

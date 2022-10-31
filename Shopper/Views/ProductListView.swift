@@ -14,73 +14,71 @@ struct ProductListView: View {
     @StateObject var viewModel: ProductListViewModel
     
     var body: some View {
-        ZStack {
-            VStack {
-                HStack {
-                    Text(viewModel.viewTitle())
-                        .font(.system(size: 26))
-                        .bold()
-                        .foregroundColor(.black)
-                    Spacer()
-                    Button {
-                        // TODO: Open cart
-                    } label: {
-                        Image(systemName: cart.isEmpty ? "cart" : "cart.fill")
-                            .resizable()
-                            .tint(.blue)
-                            .frame(width: 30, height: 30)
-                            .overlay {
-                                if cart.count > 0 {
-                                    VStack {
-                                        HStack {
-                                            Spacer()
-                                            Image(systemName: "\(cart.count).circle.fill")
-                                                .tint(.blue)
-                                        }
+        VStack {
+            HStack {
+                Text(viewModel.viewTitle())
+                    .font(.system(size: 26))
+                    .bold()
+                    .foregroundColor(.black)
+                Spacer()
+                Button {
+                    // TODO: Open cart
+                } label: {
+                    Image(systemName: cart.isEmpty ? "cart" : "cart.fill")
+                        .resizable()
+                        .tint(.blue)
+                        .frame(width: 30, height: 30)
+                        .overlay {
+                            if cart.count > 0 {
+                                VStack {
+                                    HStack {
                                         Spacer()
+                                        Image(systemName: "\(cart.count).circle.fill")
+                                            .tint(.blue)
                                     }
-                                    .padding(.trailing, -12)
-                                    .padding(.top, -8)
+                                    Spacer()
                                 }
+                                .padding(.trailing, -12)
+                                .padding(.top, -8)
                             }
-                    }
+                        }
                 }
-                .padding(.horizontal)
-                
-                if viewModel.isLoading {
+            }
+            .padding(.horizontal)
+            
+            if viewModel.isLoading {
+                VStack {
+                    Spacer()
+                    ProgressView()
+                        .tint(.blue)
+                        .scaleEffect(3)
+                        .onTapGesture {
+                            viewModel.refreshProductList()
+                        }
+                    Spacer()
+                }
+            } else {
+                if viewModel.productList.isEmpty {
                     VStack {
                         Spacer()
-                        ProgressView()
-                            .tint(.blue)
-                            .scaleEffect(3)
-                            .onTapGesture {
-                                viewModel.refreshProductList()
-                            }
+                        Button("Refresh") {
+                            viewModel.refreshProductList()
+                        }
+                        .font(.system(size: 32))
+                        .bold()
                         Spacer()
                     }
                 } else {
-                    if viewModel.productList.isEmpty {
-                        VStack {
-                            Spacer()
-                            Button("Refresh") {
-                                    viewModel.refreshProductList()
-                                }
-                            .font(.system(size: 32))
-                            .bold()
-                            Spacer()
-                        }
-                    } else {
-                        ScrollView {
-                            VStack(spacing: 0) {
-                                ForEach(viewModel.productList, id: \.self.id) { product in
-                                    ProductCellView(product: product)
-                                }
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            ForEach(viewModel.productList, id: \.self.id) { product in
+                                ProductCellView(product: product)
                             }
-                            .padding(.horizontal)
-                            .padding(.bottom, 32)
                         }
-                        .frame(maxHeight: .infinity)
+                        .padding(.horizontal)
+                        .padding(.bottom, 32)
                     }
+                    .frame(maxHeight: .infinity)
                 }
             }
         }
